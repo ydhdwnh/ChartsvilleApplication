@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='ChartsvilleApplication' version='1.0'>
-	<schema type='-xmlschema' package='' name='cvChartBinding'>
+	<schema type='-xmlschema' package='' name='chartBinding'>
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
-			<schema-source location='xml-resources/jaxb/cvChartBinding/cvChartSchema.xsd' origLocation='src/chartsvilleapplication/cvChartSchema.xsd'/>
+			<schema-source location='xml-resources/jaxb/chartBinding/cvChartSchema.xsd' origLocation='src/chartsvilleapplication/cvChartSchema.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>

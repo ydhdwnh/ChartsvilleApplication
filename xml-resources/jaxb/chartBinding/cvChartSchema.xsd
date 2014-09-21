@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="MusicChart">
+        <xsd:complexType mixed="true">
+            <xsd:sequence>
+                <xsd:element name="ChartHeader">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ChartName" type="xsd:string"/>
+                            <xsd:element name="ChartKey" type="xsd:string"/>
+                            <xsd:element name="ChartTempo" type="xsd:string"/>
+                            <xsd:element name="ChartTime" type="xsd:string"/>
+                            <xsd:element name="ChartComments" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ChartDetail">
+                    <xsd:complexType mixed="true">
+                        <xsd:sequence maxOccurs="unbounded" minOccurs="0">
+                            <xsd:element name="BarNumber" type="xsd:int"/>
+                            <xsd:element name="BarText" type="xsd:string" nillable="true"/>
+                            <xsd:element name="CommentIndicator" type="xsd:boolean" minOccurs="1"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -6,6 +6,8 @@
 package chartsvilleapplication;
 
 import generated.MusicChart;
+import generated.MusicChart.ChartDetail;
+import generated.MusicChart.ChartHeader;
 import generated.ObjectFactory;
 import java.awt.Color;
 import java.io.FileOutputStream;
@@ -466,22 +468,35 @@ public class CVMain extends javax.swing.JFrame {
     private void SaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveActionPerformed
         // TODO add your handling code here:
         try{
-            MusicChart chart = new MusicChart();
             ObjectFactory o = new generated.ObjectFactory();
+            MusicChart mChart = o.createMusicChart();
+            ChartHeader cHeader = o.createMusicChartChartHeader();
+            ChartDetail cDetail = o.createMusicChartChartDetail();
+            
             JAXBContext jc = JAXBContext.newInstance(o.getClass());
             Unmarshaller u = jc.createUnmarshaller();
             //Object element = u.unmarshal( new File( "Test Song 1.xml" ) );
             Marshaller m = jc.createMarshaller();
 
-            chart.setChartName("Test Song 1");
-            chart.setChartKey("A");
-            chart.setChartTempo("110");
-            chart.setChartTime("2/4");
-            chart.setChartComments("This is a comment.");
+            cHeader.setChartName("Test Song 1");
+            cHeader.setChartKey("A");
+            cHeader.setChartTempo("110");
+            cHeader.setChartTime("2/4");
+            cHeader.setChartComments("This is a comment.");
 
+            cDetail.getContent().add(o.createMusicChartChartDetailBarNumber(1));
+            cDetail.getContent().add(o.createMusicChartChartDetailBarText("A B C"));
+            cDetail.getContent().add(o.createMusicChartChartDetailCommentIndicator(false));
 
+            cDetail.getContent().add(o.createMusicChartChartDetailBarNumber(2));
+            cDetail.getContent().add(o.createMusicChartChartDetailBarText("D E F"));
+            cDetail.getContent().add(o.createMusicChartChartDetailCommentIndicator(false));
+            
+            mChart.getContent().add(o.createMusicChartChartHeader(cHeader));
+            mChart.getContent().add(o.createMusicChartChartDetail(cDetail));
+            
             try (OutputStream os = new FileOutputStream( "Test Song 1.xml" )) {
-                m.marshal( chart, os );
+                m.marshal( mChart, os );
             }
             catch(IOException ex){
                 Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);

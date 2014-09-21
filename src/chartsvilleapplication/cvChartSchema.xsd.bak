@@ -5,22 +5,17 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:xsd="undefined">
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
 
-    <xs:complexType name="ChartHeader">
-    	<xs:sequence>
+    <xs:complexType name="MusicChart">
+    	<xs:sequence id="ChartHeader">
             <xs:element name="ChartName" type="xs:string"></xs:element>
             <xs:element name="ChartKey" type="xs:string"></xs:element>
             <xs:element name="ChartTempo" type="xs:string"></xs:element>
             <xs:element name="ChartTime" type="xs:string"></xs:element>
             <xs:element name="ChartComments" type="xs:string"></xs:element>
     	</xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="ChartDetail">
-        <xs:sequence maxOccurs="unbounded" minOccurs="0">
-            <xs:element name="BarNumber" type="xs:integer"/>
-            <xs:element name="BarText" maxOccurs="1" minOccurs="1" type="xs:string"/>
-            <xs:element name="CommentIndicator" type="xs:boolean"/>
-        </xs:sequence>
     </xs:complexType>
 </xs:schema>
