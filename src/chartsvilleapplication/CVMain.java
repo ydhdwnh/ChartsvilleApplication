@@ -10,15 +10,22 @@ import generated.MusicChart.ChartDetail;
 import generated.MusicChart.ChartHeader;
 import generated.ObjectFactory;
 import java.awt.Color;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -319,6 +326,11 @@ public class CVMain extends javax.swing.JFrame {
         openItem.setText("Open");
         openItem.setToolTipText("");
         openItem.setName("openItem"); // NOI18N
+        openItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(openItem);
 
         Save.setText("Save");
@@ -506,6 +518,28 @@ public class CVMain extends javax.swing.JFrame {
             Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_SaveActionPerformed
+
+    private void openItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openItemActionPerformed
+        // TODO add your handling code here:
+        try{
+            ObjectFactory o = new generated.ObjectFactory();
+            JAXBContext jc = JAXBContext.newInstance(o.getClass());
+            Unmarshaller u = jc.createUnmarshaller();
+            MusicChart chart = (MusicChart)u.unmarshal( new File( "Test Song 1.xml" ) );
+
+            ChartHeader chartHeader = (ChartHeader)((JAXBElement) chart.getContent().get(0)).getValue();
+            ChartDetail chartDetail = (ChartDetail)((JAXBElement) chart.getContent().get(1)).getValue();
+            QName s1;
+            Object s2;
+            for (int i=0; i < chartDetail.getContent().size(); i++) {
+                s1 = ((JAXBElement)chartDetail.getContent().get(i)).getName();
+                s2 = ((JAXBElement)chartDetail.getContent().get(i)).getValue();
+            }
+        }
+        catch(JAXBException  ex){
+            Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_openItemActionPerformed
 
     /**
      * @param args the command line arguments
