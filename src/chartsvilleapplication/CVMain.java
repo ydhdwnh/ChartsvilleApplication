@@ -10,16 +10,16 @@ import generated.MusicChart.ChartDetail;
 import generated.MusicChart.ChartHeader;
 import generated.ObjectFactory;
 import java.awt.Color;
+import java.awt.FileDialog;
+import java.awt.Graphics;
+import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -31,8 +31,10 @@ import javax.xml.namespace.QName;
  *
  * @author TimW
  */
-public class CVMain extends javax.swing.JFrame {
 
+public class CVMain extends javax.swing.JFrame {
+    private static final String homeDirectory="c:\\Junk\\";
+    
     /**
      * Creates new form CVMain
      */
@@ -73,7 +75,7 @@ public class CVMain extends javax.swing.JFrame {
         cvChartTable = new javax.swing.JTable();
         titleLabel = new javax.swing.JLabel();
         keyLabel = new javax.swing.JLabel();
-        Label = new javax.swing.JTextField();
+        Title = new javax.swing.JTextField();
         keyComboBox = new javax.swing.JComboBox();
         tempoLabel = new javax.swing.JLabel();
         tempoTextField = new javax.swing.JTextField();
@@ -90,14 +92,15 @@ public class CVMain extends javax.swing.JFrame {
         greenButton = new javax.swing.JButton();
         blueButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
-        jLabel1 = new javax.swing.JLabel();
+        commentText = new javax.swing.JEditorPane();
+        commentLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        newItem = new javax.swing.JMenuItem();
-        openItem = new javax.swing.JMenuItem();
-        Save = new javax.swing.JMenuItem();
-        Exit = new javax.swing.JMenuItem();
+        newChart = new javax.swing.JMenuItem();
+        openChart = new javax.swing.JMenuItem();
+        saveChart = new javax.swing.JMenuItem();
+        printChart = new javax.swing.JMenuItem();
+        exitChart = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
 
         insertRowMenuItem.setText("Insert Row");
@@ -166,7 +169,7 @@ public class CVMain extends javax.swing.JFrame {
         keyLabel.setFont(new java.awt.Font("Comic Sans MS", 1, 12)); // NOI18N
         keyLabel.setText("Key");
 
-        Label.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        Title.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
 
         keyComboBox.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         keyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "A", "B", "C", "D", "E", "F", "G" }));
@@ -309,46 +312,54 @@ public class CVMain extends javax.swing.JFrame {
         textColorLayeredPane.setLayer(greenButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
         textColorLayeredPane.setLayer(blueButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jScrollPane1.setViewportView(jEditorPane1);
+        jScrollPane1.setViewportView(commentText);
 
-        jLabel1.setFont(new java.awt.Font("Comic Sans MS", 1, 12)); // NOI18N
-        jLabel1.setText("Comments");
+        commentLabel.setFont(new java.awt.Font("Comic Sans MS", 1, 12)); // NOI18N
+        commentLabel.setText("Comments");
 
         jMenuBar1.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
         jMenuBar1.setName("cvMenu1"); // NOI18N
 
         fileMenu.setText("File");
 
-        newItem.setText("New");
-        newItem.setName("newItem"); // NOI18N
-        fileMenu.add(newItem);
+        newChart.setText("New");
+        newChart.setName("newChart"); // NOI18N
+        fileMenu.add(newChart);
 
-        openItem.setText("Open");
-        openItem.setToolTipText("");
-        openItem.setName("openItem"); // NOI18N
-        openItem.addActionListener(new java.awt.event.ActionListener() {
+        openChart.setText("Open");
+        openChart.setToolTipText("");
+        openChart.setName("openChart"); // NOI18N
+        openChart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openItemActionPerformed(evt);
+                openChartActionPerformed(evt);
             }
         });
-        fileMenu.add(openItem);
+        fileMenu.add(openChart);
 
-        Save.setText("Save");
-        Save.addActionListener(new java.awt.event.ActionListener() {
+        saveChart.setText("Save");
+        saveChart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SaveActionPerformed(evt);
+                saveChartActionPerformed(evt);
             }
         });
-        fileMenu.add(Save);
+        fileMenu.add(saveChart);
 
-        Exit.setText("Exit");
-        Exit.setName("exitItem"); // NOI18N
-        Exit.addActionListener(new java.awt.event.ActionListener() {
+        printChart.setText("Print");
+        printChart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitActionPerformed(evt);
+                printChartActionPerformed(evt);
             }
         });
-        fileMenu.add(Exit);
+        fileMenu.add(printChart);
+
+        exitChart.setText("Exit");
+        exitChart.setName("exitItem"); // NOI18N
+        exitChart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitChartActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitChart);
 
         jMenuBar1.add(fileMenu);
 
@@ -366,10 +377,10 @@ public class CVMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(titleLabel)
-                    .addComponent(jLabel1))
+                    .addComponent(commentLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(Label)
+                    .addComponent(Title)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -397,12 +408,12 @@ public class CVMain extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(titleLabel)
-                                    .addComponent(Label, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jScrollPane1)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
+                                        .addComponent(commentLabel)
                                         .addGap(0, 0, Short.MAX_VALUE))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -429,10 +440,10 @@ public class CVMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
+    private void exitChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitChartActionPerformed
         // TODO add your handling code here:
         this.dispose();
-    }//GEN-LAST:event_ExitActionPerformed
+    }//GEN-LAST:event_exitChartActionPerformed
 
     private void keyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyComboBoxActionPerformed
         // TODO add your handling code here:
@@ -477,8 +488,94 @@ public class CVMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_deleteRowMenuItemMouseClicked
 
-    private void SaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveActionPerformed
+    private void saveChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveChartActionPerformed
         // TODO add your handling code here:
+        FileDialog f = new FileDialog(this);
+        f.setTitle("Save Music Chart");
+        f.setFile("*.xml");
+        f.setMode(FileDialog.SAVE);
+        f.setFile(Title.getText()+".xml");
+        f.setDirectory("C:\\Junk");
+
+        f.setVisible(true);
+        String fileName;
+        fileName = f.getFile();
+        if (fileName != null){
+            saveChart();
+        }
+    }//GEN-LAST:event_saveChartActionPerformed
+
+    private void openChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openChartActionPerformed
+        // TODO add your handling code here:
+        FileDialog f = new FileDialog(this);
+        f.setTitle("Open Music Chart");
+        f.setFile("*.xml");
+        f.setVisible(true);
+        String fileName = f.getFile();
+        String fileDir = f.getDirectory();
+        
+        if (fileName != null){
+            try{
+                ObjectFactory o = new generated.ObjectFactory();
+                JAXBContext jc = JAXBContext.newInstance(o.getClass());
+                Unmarshaller u = jc.createUnmarshaller();
+                MusicChart chart = (MusicChart)u.unmarshal( new File( fileDir + fileName ) );
+
+                openChart(chart);
+            }
+            catch(JAXBException  ex){
+                Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_openChartActionPerformed
+
+    private void printChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printChartActionPerformed
+        try {
+            // TODO add your handling code here:
+            cvChartTable.print(JTable.PrintMode.FIT_WIDTH);
+        } catch (PrinterException ex) {
+            Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_printChartActionPerformed
+
+    private void openChart(MusicChart chart){
+        int iCell=0, iRow=0;
+        ChartHeader chartHeader;
+        ChartDetail chartDetail;
+        QName s1;
+        Object s2;
+        
+        cvChartTable.selectAll();
+        cvChartTable.clearSelection();
+        chartHeader = (ChartHeader)((JAXBElement) chart.getContent().get(0)).getValue();        
+        chartDetail = (ChartDetail)((JAXBElement) chart.getContent().get(1)).getValue();        
+
+        Title.setText(chartHeader.getChartName());
+        commentText.setText(chartHeader.getChartComments());
+        tempoTextField.setText(chartHeader.getChartTempo());
+        keyComboBox.setSelectedItem(chartHeader.getChartKey());
+        timeComboBox.setSelectedItem(chartHeader.getChartTime());
+        if ("Chord Chart".equals(chartHeader.getChartType())){
+            chordRadioButton.setSelected(true);
+        }else{
+            numberRadioButton.setSelected(true);
+        }
+        
+        for (int i=0; i < chartDetail.getContent().size(); i++) {
+            s1 = ((JAXBElement)chartDetail.getContent().get(i)).getName();
+            s2 = ((JAXBElement)chartDetail.getContent().get(i)).getValue();
+            if("BarText".equals(s1.toString())){
+                cvChartTable.setValueAt(s2, iRow, iCell);
+                iCell++;
+                if(iCell == 4){
+                    iCell=0;
+                    iRow++;
+                }
+            }
+        }
+    }
+    
+    private void saveChart(){
         try{
             ObjectFactory o = new generated.ObjectFactory();
             MusicChart mChart = o.createMusicChart();
@@ -487,27 +584,40 @@ public class CVMain extends javax.swing.JFrame {
             
             JAXBContext jc = JAXBContext.newInstance(o.getClass());
             Unmarshaller u = jc.createUnmarshaller();
-            //Object element = u.unmarshal( new File( "Test Song 1.xml" ) );
             Marshaller m = jc.createMarshaller();
 
-            cHeader.setChartName("Test Song 1");
-            cHeader.setChartKey("A");
-            cHeader.setChartTempo("110");
-            cHeader.setChartTime("2/4");
-            cHeader.setChartComments("This is a comment.");
+            // *************************
+            // Set Chart Header
+            // *************************
+            cHeader.setChartName(Title.getText());
+            cHeader.setChartKey(keyComboBox.getSelectedItem().toString());
+            cHeader.setChartTempo(tempoTextField.getText());
+            cHeader.setChartTime(timeComboBox.getSelectedItem().toString());
+            cHeader.setChartComments(commentText.getText());
+            if (chordRadioButton.isSelected()){
+                cHeader.setChartType(chordRadioButton.getText());
+            }else{
+                cHeader.setChartType(numberRadioButton.getText());
+            }
 
-            cDetail.getContent().add(o.createMusicChartChartDetailBarNumber(1));
-            cDetail.getContent().add(o.createMusicChartChartDetailBarText("A B C"));
-            cDetail.getContent().add(o.createMusicChartChartDetailCommentIndicator(false));
+            // *************************
+            // Set Chart Detail
+            // *************************
+            int iRow=0, iCol=0, iBar=0;
+            for (iRow=0; iRow < cvChartTable.getRowCount(); iRow++){
+                for (iCol=0; iCol < 4; iCol++){
+                    String cText;
+                    cDetail.getContent().add(o.createMusicChartChartDetailBarNumber(iBar++));
+                    cText = (String) cvChartTable.getValueAt(iRow, iCol);
+                    cDetail.getContent().add(o.createMusicChartChartDetailBarText(cText));
+                    cDetail.getContent().add(o.createMusicChartChartDetailCommentIndicator(false));
+                }
+            }
 
-            cDetail.getContent().add(o.createMusicChartChartDetailBarNumber(2));
-            cDetail.getContent().add(o.createMusicChartChartDetailBarText("D E F"));
-            cDetail.getContent().add(o.createMusicChartChartDetailCommentIndicator(false));
-            
             mChart.getContent().add(o.createMusicChartChartHeader(cHeader));
             mChart.getContent().add(o.createMusicChartChartDetail(cDetail));
             
-            try (OutputStream os = new FileOutputStream( "Test Song 1.xml" )) {
+            try (OutputStream os = new FileOutputStream( homeDirectory + Title.getText() + ".xml" )) {
                 m.marshal( mChart, os );
             }
             catch(IOException ex){
@@ -516,31 +626,9 @@ public class CVMain extends javax.swing.JFrame {
         }
         catch(JAXBException  ex){
             Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_SaveActionPerformed
-
-    private void openItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openItemActionPerformed
-        // TODO add your handling code here:
-        try{
-            ObjectFactory o = new generated.ObjectFactory();
-            JAXBContext jc = JAXBContext.newInstance(o.getClass());
-            Unmarshaller u = jc.createUnmarshaller();
-            MusicChart chart = (MusicChart)u.unmarshal( new File( "Test Song 1.xml" ) );
-
-            ChartHeader chartHeader = (ChartHeader)((JAXBElement) chart.getContent().get(0)).getValue();
-            ChartDetail chartDetail = (ChartDetail)((JAXBElement) chart.getContent().get(1)).getValue();
-            QName s1;
-            Object s2;
-            for (int i=0; i < chartDetail.getContent().size(); i++) {
-                s1 = ((JAXBElement)chartDetail.getContent().get(i)).getName();
-                s2 = ((JAXBElement)chartDetail.getContent().get(i)).getValue();
-            }
-        }
-        catch(JAXBException  ex){
-            Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_openItemActionPerformed
-
+        }   
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -577,33 +665,34 @@ public class CVMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem Exit;
-    private javax.swing.JTextField Label;
-    private javax.swing.JMenuItem Save;
+    private javax.swing.JTextField Title;
     private javax.swing.JButton blackButton;
     private javax.swing.JButton blueButton;
     private javax.swing.JLabel chartTypeLabel;
     private javax.swing.JLayeredPane chartTypeLayeredPane;
     private javax.swing.JRadioButton chordRadioButton;
+    private javax.swing.JLabel commentLabel;
+    private javax.swing.JEditorPane commentText;
     private javax.swing.JTable cvChartTable;
     private javax.swing.ButtonGroup cvChartTypebuttonGroup;
     private javax.swing.JScrollPane cvScrollPane;
     private javax.swing.JMenuItem deleteRowMenuItem;
     private javax.swing.JMenu editMenu;
+    private javax.swing.JMenuItem exitChart;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JButton greenButton;
     private javax.swing.JPopupMenu gridPopupMenu;
     private javax.swing.JMenuItem insertRowMenuItem;
-    private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox keyComboBox;
     private javax.swing.JLabel keyLabel;
-    private javax.swing.JMenuItem newItem;
+    private javax.swing.JMenuItem newChart;
     private javax.swing.JRadioButton numberRadioButton;
-    private javax.swing.JMenuItem openItem;
+    private javax.swing.JMenuItem openChart;
+    private javax.swing.JMenuItem printChart;
     private javax.swing.JButton redButton;
+    private javax.swing.JMenuItem saveChart;
     private javax.swing.JLabel tempoLabel;
     private javax.swing.JTextField tempoTextField;
     private javax.swing.JLabel textColorLabel;

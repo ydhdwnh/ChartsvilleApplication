@@ -6,6 +6,7 @@
                 <xsd:element name="ChartHeader">
                     <xsd:complexType>
                         <xsd:sequence>
+                            <xsd:element name="ChartType" type="xsd:string"/>
                             <xsd:element name="ChartName" type="xsd:string"/>
                             <xsd:element name="ChartKey" type="xsd:string"/>
                             <xsd:element name="ChartTempo" type="xsd:string"/>
