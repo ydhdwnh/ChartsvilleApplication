@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : chartFormatter.xsl
+    Created on : September 23, 2014, 5:26 PM
+    Author     : DIZ07
+    Description:
+        Purpose of transformation follows.
+-->
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:output method="html"/>
+
+    <!-- TODO customize transformation rules 
+         syntax recommendation http://www.w3.org/TR/xslt 
+    -->
+    <xsl:template match="/">
+        <html>
+            <head>
+                <title>chartFormatter.xsl</title>
+            </head>
+            <body>
+                Chart Name: <xsl:value-of select="MusicChart/ChartHeader/ChartName"/><br></br>
+                Chart Key: <xsl:value-of select="MusicChart/ChartHeader/ChartKey"/><br></br>
+                Tempo: <xsl:value-of select="MusicChart/ChartHeader/ChartTempo"/><br></br>
+                Time: <xsl:value-of select="MusicChart/ChartHeader/ChartTime"/><br></br>
+                Comments: <xsl:value-of select="MusicChart/ChartHeader/ChartComments"/><br></br>
+                <xsl:for-each select="MusicChart/ChartDetail">
+                    <xsl:for-each select="BarText">
+                        <xsl:value-of select="."/><xsl:text>    </xsl:text>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </body>
+        </html>
+    </xsl:template>
+
+</xsl:stylesheet>
+<!-- Stylus Studio meta-information - (c) 2004-2009. Progress Software Corporation. All rights reserved.
+
+<metaInformation>
+	<scenarios>
+		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="..\..\..\..\..\..\..\Junk\Song 1.xml" htmlbaseurl="" outputurl="..\..\..\..\..\..\..\Junk\Song 1.html" processortype="saxon8" useresolver="yes"
+		          profilemode="0" profiledepth="" profilelength="" urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""
+		          validateoutput="no" validator="internal" customvalidator="">
+			<advancedProp name="sInitialMode" value=""/>
+			<advancedProp name="bXsltOneIsOkay" value="true"/>
+			<advancedProp name="bSchemaAware" value="true"/>
+			<advancedProp name="bXml11" value="false"/>
+			<advancedProp name="iValidation" value="0"/>
+			<advancedProp name="bExtensions" value="true"/>
+			<advancedProp name="iWhitespace" value="0"/>
+			<advancedProp name="sInitialTemplate" value=""/>
+			<advancedProp name="bTinyTree" value="true"/>
+			<advancedProp name="bWarnings" value="true"/>
+			<advancedProp name="bUseDTD" value="false"/>
+			<advancedProp name="iErrorHandling" value="fatal"/>
+		</scenario>
+	</scenarios>
+	<MapperMetaTag>
+		<MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
+		<MapperBlockPosition></MapperBlockPosition>
+		<TemplateContext></TemplateContext>
+		<MapperFilter side="source"></MapperFilter>
+	</MapperMetaTag>
+</metaInformation>
+-->
