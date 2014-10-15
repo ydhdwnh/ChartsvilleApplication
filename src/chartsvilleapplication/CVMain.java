@@ -10,22 +10,30 @@ import generated.MusicChart.ChartDetail;
 import generated.MusicChart.ChartHeader;
 import generated.ObjectFactory;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FileDialog;
-import java.awt.Graphics;
 import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTable;
+import javax.swing.JOptionPane;
+import javax.swing.JTable.PrintMode;
+import javax.swing.table.JTableHeader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.stream.StreamSource;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -40,11 +48,11 @@ public class CVMain extends javax.swing.JFrame {
      */
     public CVMain() {
         initComponents();
-        formatTableColumns();
+        formatTable();
     }
     
     // Method to format the chart table font in the cells
-    private void formatTableColumns()
+    private void formatTable()
     {
         javax.swing.JTextField tx;
         tx = new javax.swing.JTextField();
@@ -56,6 +64,9 @@ public class CVMain extends javax.swing.JFrame {
         cvChartTable.getColumnModel().getColumn(2).setCellEditor(dce);
         cvChartTable.getColumnModel().getColumn(3).setCellEditor(dce);
         cvChartTable.setGridColor(Color.LIGHT_GRAY);
+        
+        cvChartTable.setBackground(Color.white);
+        cvChartTable.setShowGrid(true);
     }
     
     /**
@@ -101,6 +112,7 @@ public class CVMain extends javax.swing.JFrame {
         saveChart = new javax.swing.JMenuItem();
         printChart = new javax.swing.JMenuItem();
         exitChart = new javax.swing.JMenuItem();
+        browserView = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
 
         insertRowMenuItem.setText("Insert Row");
@@ -123,7 +135,9 @@ public class CVMain extends javax.swing.JFrame {
         setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         setName("cvFrame"); // NOI18N
 
-        cvChartTable.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        cvScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        cvScrollPane.setBorder(null);
+
         cvChartTable.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
         cvChartTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -141,7 +155,7 @@ public class CVMain extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Bar", "Bar", "Bar", "Bar"
+                "Measure", "Measure", "Measure", "Measure"
             }
         ) {
             Class[] types = new Class [] {
@@ -172,7 +186,7 @@ public class CVMain extends javax.swing.JFrame {
         Title.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
 
         keyComboBox.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
-        keyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "A", "B", "C", "D", "E", "F", "G" }));
+        keyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "A", "B", "C", "D", "E", "F", "G", "Ab", "Bb", "Cb", "Db", "Eb", "Gb", "A#", "C#", "D#", "E#", "G#", "Amin", "Bmin", "Cmin", "Dmin", "Emin", "Fmin", "Gmin", "Abmin", "Bbmin", "Cbmin", "Dbmin", "Ebmin", "Gbmin", "A#min", "C#min", "D#min", "E#min", "G#min" }));
         keyComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 keyComboBoxActionPerformed(evt);
@@ -188,7 +202,7 @@ public class CVMain extends javax.swing.JFrame {
         timeLabel.setText("Time");
 
         timeComboBox.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
-        timeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "4/4", "2/4", "2/4", "6/8", " " }));
+        timeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2/4", "3/4", "4/4", "5/4", "7/4", "5/8", "6/8", "7/8", "9/8" }));
 
         chartTypeLayeredPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -223,7 +237,7 @@ public class CVMain extends javax.swing.JFrame {
             .addGroup(chartTypeLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(chartTypeLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(chordRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(chordRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(numberRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -360,6 +374,14 @@ public class CVMain extends javax.swing.JFrame {
             }
         });
         fileMenu.add(exitChart);
+
+        browserView.setText("Browser View");
+        browserView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browserViewActionPerformed(evt);
+            }
+        });
+        fileMenu.add(browserView);
 
         jMenuBar1.add(fileMenu);
 
@@ -530,13 +552,53 @@ public class CVMain extends javax.swing.JFrame {
     }//GEN-LAST:event_openChartActionPerformed
 
     private void printChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printChartActionPerformed
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        PrinterJob job = PrinterJob.getPrinterJob();
+
+        MessageFormat[] header = new MessageFormat[3];
+        header[0] = new MessageFormat("");
+        header[1] = new MessageFormat(Title.getText());
+        header[2] = new MessageFormat("Key: " + keyComboBox.getSelectedItem().toString() +
+                "     Time: " + timeComboBox.getSelectedItem().toString() +
+                "     Tempo: " + tempoTextField.getText());
+
+        MessageFormat[] footer = new MessageFormat[1];
+        footer[0] = new MessageFormat("Comments:  " + commentText.getText());
+        
+        JTableHeader hdr = cvChartTable.getTableHeader();
+        cvChartTable.setShowGrid(true);
+        cvChartTable.setTableHeader(null);
+        
+        job.setPrintable(new MyTablePrintable(cvChartTable, PrintMode.FIT_WIDTH, header, footer));
+        if (job.printDialog())
+          try {
+            job.print();
+            cvChartTable.setTableHeader(hdr);
+            this.setCursor(null);
+            JOptionPane.showMessageDialog(printChart, "Printing complete.");
+          }
+          catch (PrinterException pe) {
+                Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, pe);
+                this.setCursor(null);
+          }
+        this.setCursor(null);
+    }//GEN-LAST:event_printChartActionPerformed
+
+    private void browserViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browserViewActionPerformed
         try {
             // TODO add your handling code here:
-            cvChartTable.print(JTable.PrintMode.FIT_WIDTH);
-        } catch (PrinterException ex) {
+            File stylesheet = new File("xsltFile");
+            File datafile = new File("xsdFile");
+            
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.parse(datafile);
+            // ...
+            StreamSource stylesource = new StreamSource(stylesheet);        
+            Transformer transformer = Factory.newTransformer(stylesource);
+        } catch (SAXException | IOException ex) {
             Logger.getLogger(CVMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_printChartActionPerformed
+    }//GEN-LAST:event_browserViewActionPerformed
 
     private void openChart(MusicChart chart){
         int iCell=0, iRow=0;
@@ -668,6 +730,7 @@ public class CVMain extends javax.swing.JFrame {
     private javax.swing.JTextField Title;
     private javax.swing.JButton blackButton;
     private javax.swing.JButton blueButton;
+    private javax.swing.JMenuItem browserView;
     private javax.swing.JLabel chartTypeLabel;
     private javax.swing.JLayeredPane chartTypeLayeredPane;
     private javax.swing.JRadioButton chordRadioButton;
